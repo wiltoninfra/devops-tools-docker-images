@@ -1,0 +1,9 @@
+version: "3.3"
+services: 
+  web-template:
+    build: .
+    container_name: web-template 
+    ports:
+      - 8080:80
+    volumes:
+      - "./app:/app"

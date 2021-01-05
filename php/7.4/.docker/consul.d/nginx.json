@@ -1,0 +1,15 @@
+{
+    "service": {
+        "name": "web-template",
+        "port": 9113,
+        "checks": [
+        {
+            "id": "metrics",
+            "name": "Web Template Nginx",
+            "http": "http://web-template:9113/metrics",
+            "interval": "10s"
+        }
+        ]
+    
+    }
+}

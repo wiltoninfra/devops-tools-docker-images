@@ -1,0 +1,9 @@
+{
+    "service": {
+      "name": "web-template",
+      "tags": [
+        "web-template"
+      ],
+      "port": 80
+    }
+  }

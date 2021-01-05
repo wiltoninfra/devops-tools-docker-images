@@ -1,0 +1,17 @@
+{
+    "service": {
+        "name": "php-fpm-exporter",
+        "tags": [
+            "dev-php-fpm-exporter"
+          ],
+        "port": 9253,
+        "checks": [
+            {
+                "id": "metrics",
+                "name": "Web PHP-FPM",
+                "http": "http://php-fpm-exporter:9253/metrics",
+                "interval": "5s"
+            }
+        ]
+    }
+}

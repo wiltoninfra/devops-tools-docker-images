@@ -1,0 +1,14 @@
+{
+    "service": {
+        "name": "php-exporter",
+        "port": 9253,
+        "checks": [
+            {
+                "id": "metrics",
+                "name": "Web PHP-FPM",
+                "http": "http://php-exporter:9253/metrics",
+                "interval": "10s"
+            }
+        ]
+    }
+}

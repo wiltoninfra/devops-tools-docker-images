@@ -1,0 +1,12 @@
+version: '3.2'
+services:
+  php-fpm72:
+    container_name: php-fpm72
+    build: .
+    ports:
+      - 8080:80
+      - 9253:9253
+    volumes:
+      - './app:/app'
+        
+

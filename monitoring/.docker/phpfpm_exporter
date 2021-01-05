@@ -1,0 +1,44 @@
+#!/bin/sh -e
+# Phpfpm exporter startup script
+#Ref: https://github.com/Lusitaniae/phpfpm_exporter
+# chkconfig: - 64 36
+#description: phpfpm_exporter
+
+
+# Define some variables
+APP=phpfpm_exporter
+# Location of phpfpm_exporter binary
+PHPFPM_EXP=/usr/local/bin
+QUERY="--phpfpm.socket-paths /var/run/phpfpm.sock --phpfpm.socket-paths /var/run/phpfpm-api2-sock "
+
+
+case "$1" in
+  # Start command
+  start)
+    echo "Starting $APP"
+        nohup /usr/local/bin/phpfpm_exporter > /dev/null 2>&1&
+        echo $! > /var/run/phpfpm_exporter.pid
+        echo
+   ;;
+  # Stop command
+  stop)
+    echo "Stopping $APP"
+        if [ -f /var/run/phpfpm_exporter.pid ]; then
+        kill `cat /var/run/phpfpm_exporter.pid`
+        rm /var/run/phpfpm_exporter.pid
+        fi
+    echo "$APP stopped successfully"
+    ;;
+   # Restart command
+   restart)
+        $0 stop
+        sleep 5
+        $0 start
+        ;;
+  *)
+    echo "Usage: /etc/init.d/$APP {start|restart|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0

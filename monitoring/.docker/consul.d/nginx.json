@@ -1,0 +1,18 @@
+{
+    "service": {
+        "name": "nginx-exporter",
+        "tags": [
+            "dev-nginx-exporter"
+          ],
+        "port": 9113,
+        "checks": [
+        {
+            "id": "metrics",
+            "name": "Nginx Exporter",
+            "http": "http://nginx-exporter:9113/metrics",
+            "interval": "5s"
+        }
+        ]
+    
+    }
+}

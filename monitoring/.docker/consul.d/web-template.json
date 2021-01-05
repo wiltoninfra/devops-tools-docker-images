@@ -1,0 +1,9 @@
+{
+    "service": {
+      "name": "app-web",
+      "tags": [
+        "app-web"
+      ],
+      "port": 80
+    }
+  }

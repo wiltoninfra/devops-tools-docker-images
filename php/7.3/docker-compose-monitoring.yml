@@ -1,0 +1,121 @@
+version: "3.5"
+
+services:
+  web-template:
+    build: .
+    container_name: web-template 
+    hostname: web-template
+    ports:
+      - 8081:80
+      - 9113:9113
+    volumes:
+      - "./app:/app"
+    networks:
+      monitoring:
+        aliases:
+          - web-template 
+          
+  php-exporter:
+    image: hipages/php-fpm_exporter:latest
+    container_name: php-exporter
+    hostname: php-exporter
+    ports:
+      - "9253:9253"
+    environment:
+      PHP_FPM_SCRAPE_URI: "tcp://web-template:9000/status"
+      PHP_FPM_LOG_LEVEL: "debug" 
+    networks:
+      monitoring:
+       aliases:
+         - php-exporter              
+
+  prometheus:
+      image: prom/prometheus
+      container_name: prometheus 
+      hostname: prometheus
+      volumes:
+      - .docker/prometheus/:/etc/prometheus/
+      - prometheus_data:/var/lib/prometheus
+      restart: always
+      links:
+        - cadvisor:cadvisor
+        - node-exporter:node-exporter
+      ports:
+        - 9090:9090 
+      networks:
+        monitoring:
+          aliases:
+            - prometheus         
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter
+    container_name: node-exporter
+    hostname: node-exporter
+    volumes:
+      - /proc:/usr/proc
+      - /sys:/usr/sys
+      - /:/rootfs
+    ports:
+      - 9100:9100
+    networks:
+      monitoring:
+        aliases:
+          - node-exporter       
+
+  cadvisor:
+    image: google/cadvisor
+    container_name: cadvisor
+    hostname: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 8080:8080
+    networks:
+      monitoring:
+        aliases:
+          - cadvisor       
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    env_file:
+      - .docker/grafana.config
+    depends_on:
+      - prometheus 
+    networks:
+      monitoring:
+        aliases:
+          - grafana            
+
+  consul:
+    image: consul
+    container_name: consul
+    ports:
+      - 8300:8300
+      - 8500:8500  
+    hostname: "consul"
+    volumes:
+      - .docker/consul.d:/etc/consul.d
+      - .docker/consul.d/consul.json:/consul/config/consul.json
+      - .docker/consul.d/nginx.json:/consul/config/nginx.json
+      - .docker/consul.d/php-fpm.json:/consul/config/php-fpm.json 
+    networks:
+      monitoring:
+        aliases:
+          - consul 
+
+volumes:
+    prometheus_data:
+    grafana_data:
+
+networks:
+  monitoring:
